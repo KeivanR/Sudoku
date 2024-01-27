@@ -2,6 +2,18 @@ import numpy as np
 import grids
 
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 def update_grid():
     idim, jdim = np.where(np.sum(cube, 2) == 1)
     grid[idim, jdim] = np.argmax(cube[idim, jdim], 1) + 1
@@ -48,6 +60,22 @@ def squares_sums(array):
     return sums
 
 
+def show_grid(grid, ref):
+    print(f' {bcolors.UNDERLINE}                              {bcolors.ENDC}')
+    for i in range(grid.shape[0]):
+        line = '|'
+        for j in range(grid.shape[1]):
+            value = f' {grid[i, j]} '
+            if ref[i,j]==0 and grid[i, j]>0:
+                value = f'{bcolors.OKGREEN}{value}{bcolors.ENDC}'
+            if i % 3 == 2:
+                value = f'{bcolors.UNDERLINE}{value}{bcolors.ENDC}'
+            if j % 3 == 2:
+                value += '|'
+            line += value
+        print(line)
+
+
 def erase_from_square():
     idim, jdim, kdim = np.where(squares_sums(cube) == 1)
     for i, j, k in zip(idim, jdim, kdim):
@@ -61,18 +89,19 @@ def erase_from_square():
 
 
 grid = grids.expert_grid
+ref = grid.copy()
 cube = np.ones((9, 9, 9))
 rows, cols = np.where(grid > 0)
 cube[rows, cols] = 0
 cube[rows, cols, grid[rows, cols] - 1] = 1
-
-print(grid)
+print(f"{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}")
+show_grid(grid, ref)
 for i in range(100):
     erase_from_val()
     erase_from_row()
     erase_from_col()
     erase_from_square()
     print(f'Step {i}')
-    print(grid)
+    show_grid(grid, ref)
 
 
