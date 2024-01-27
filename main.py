@@ -60,14 +60,17 @@ def squares_sums(array):
     return sums
 
 
-def show_grid(grid, ref):
+def show_grid(grid, prev, ref):
     print(f' {bcolors.UNDERLINE}                              {bcolors.ENDC}')
     for i in range(grid.shape[0]):
         line = '|'
         for j in range(grid.shape[1]):
             value = f' {grid[i, j]} '
             if ref[i,j]==0 and grid[i, j]>0:
-                value = f'{bcolors.OKGREEN}{value}{bcolors.ENDC}'
+                if prev[i,j] == 0:
+                    value = f'{bcolors.OKBLUE}{value}{bcolors.ENDC}'
+                else:
+                    value = f'{bcolors.OKGREEN}{value}{bcolors.ENDC}'
             if i % 3 == 2:
                 value = f'{bcolors.UNDERLINE}{value}{bcolors.ENDC}'
             if j % 3 == 2:
@@ -88,20 +91,21 @@ def erase_from_square():
     update_grid()
 
 
-grid = grids.expert_grid
+grid = grids.hard_grid
 ref = grid.copy()
+prev = grid.copy()
 cube = np.ones((9, 9, 9))
 rows, cols = np.where(grid > 0)
 cube[rows, cols] = 0
 cube[rows, cols, grid[rows, cols] - 1] = 1
-print(f"{bcolors.WARNING}Warning: No active frommets remain. Continue?{bcolors.ENDC}")
-show_grid(grid, ref)
-for i in range(100):
+show_grid(grid, prev, ref)
+for i in range(10):
     erase_from_val()
     erase_from_row()
     erase_from_col()
     erase_from_square()
     print(f'Step {i}')
-    show_grid(grid, ref)
+    show_grid(grid, prev, ref)
+    prev = grid.copy()
 
 
