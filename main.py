@@ -60,25 +60,6 @@ def squares_sums(array):
     return sums
 
 
-def show_grid(grid, prev, ref):
-    print(f' {bcolors.UNDERLINE}                              {bcolors.ENDC}')
-    for i in range(grid.shape[0]):
-        line = '|'
-        for j in range(grid.shape[1]):
-            value = f' {grid[i, j]} '
-            if ref[i,j]==0 and grid[i, j]>0:
-                if prev[i,j] == 0:
-                    value = f'{bcolors.OKBLUE}{value}{bcolors.ENDC}'
-                else:
-                    value = f'{bcolors.OKGREEN}{value}{bcolors.ENDC}'
-            if i % 3 == 2:
-                value = f'{bcolors.UNDERLINE}{value}{bcolors.ENDC}'
-            if j % 3 == 2:
-                value += '|'
-            line += value
-        print(line)
-
-
 def erase_from_square():
     idim, jdim, kdim = np.where(squares_sums(cube) == 1)
     for i, j, k in zip(idim, jdim, kdim):
@@ -91,7 +72,28 @@ def erase_from_square():
     update_grid()
 
 
-grid = grids.hard_grid
+def show_grid(grid, prev, ref):
+    print(f' ______________________________')
+    for i in range(grid.shape[0]):
+        line = '|'
+        for j in range(grid.shape[1]):
+            value = f'{grid[i, j]}'
+            if ref[i,j]==0 and grid[i, j]>0:
+                if prev[i,j] == 0:
+                    value = f'{bcolors.OKBLUE}{value}{bcolors.ENDC}'
+                else:
+                    value = f'{bcolors.OKGREEN}{value}{bcolors.ENDC}'
+            if i % 3 == 2:
+                value = f'_{value}_'
+            else:
+                value = f' {value} '
+            if j % 3 == 2:
+                value += '|'
+            line += value
+        print(line)
+
+
+grid = grids.diff_grid
 ref = grid.copy()
 prev = grid.copy()
 cube = np.ones((9, 9, 9))
